@@ -13,4 +13,5 @@ gpiozero==2.0.1
 
 # Optional: for better servo timing precision (install via apt)
 # pigpio is typically installed via: sudo apt install pigpio
-# If you must use pip: pigpio==1.78
+# If you must use pip: 
+pigpio==1.78

@@ -1,4 +1,5 @@
 # Install required dependencies
+cd ~
 sudo apt install -y python3-setuptools python3-full wget build-essential
 
 # Download the latest pigpio release (v79 as of now)
@@ -16,3 +17,6 @@ sudo systemctl daemon-reload
 
 # Enable and start the pigpiod service
 sudo systemctl enable --now pigpiod
+
+sudo systemctl enable pigpiod
+sudo systemctl start pigpiod

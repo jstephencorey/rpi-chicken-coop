@@ -164,3 +164,91 @@ You should see:
 Now visit https://coop.your-domain.workers.dev — it should show your chicken coop interface!
 
 Stop the test with Ctrl+C.
+
+## Cloudflare Systemd Service (Auto-Start on Boot)
+
+### Step 7: Create Service File
+```bash
+sudo vim /etc/systemd/system/cloudflared-chicken-coop.service
+```
+Add this:
+
+```ini
+[Unit]
+Description=Cloudflare Tunnel for Chicken Coop
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+User=picoop-admin
+Group=picoop-admin
+WorkingDirectory=/home/picoop-admin
+ExecStart=/usr/local/bin/cloudflared tunnel run rpi-chicken-coop
+Restart=always
+RestartSec=5
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Step 8: Enable and Start Service
+```bash
+# Reload systemd to pick up new service
+sudo systemctl daemon-reload
+
+# Enable auto-start on boot
+sudo systemctl enable cloudflared-chicken-coop.service
+
+# Start now
+sudo systemctl start cloudflared-chicken-coop.service
+
+# Check status
+sudo systemctl status cloudflared-chicken-coop.service
+```
+You should see active (running).
+
+## Run the web server stuff as a service (so it will survive restarts):
+
+``` bash
+sudo vim /etc/systemd/system/chicken-coop-api.service
+```
+
+```ini
+[Unit]
+Description=Chicken Coop FastAPI Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=picoop-admin
+Group=picoop-admin
+WorkingDirectory=/home/picoop-admin/rpi-chicken-coop
+
+# Activate venv and run uvicorn
+ExecStart=/home/picoop-admin/rpi-chicken-coop/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
+
+Restart=always
+RestartSec=5
+
+# Environment
+Environment="PYTHONUNBUFFERED=1"
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Then enable and start:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable chicken-coop-api.service
+sudo systemctl start chicken-coop-api.service
+sudo systemctl status chicken-coop-api.service
+```

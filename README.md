@@ -43,8 +43,8 @@ Flash to microSD and boot the Pi.
 # Update system (this may take a while)
 sudo apt update && sudo apt upgrade -y
 
-# Install system dependencies
-sudo apt install -y python3-pip python3-venv ffmpeg v4l-utils git motion vim python3-picamera2 libcap-dev
+# Install system dependencies (also may take a while)
+sudo apt install -y python3-pip python3-venv ffmpeg v4l-utils git motion vim python3-picamera2 libcap-dev pigpio
 
 # verify has rpicam: this should return something.
 which rpicam-still
@@ -64,7 +64,7 @@ git clone https://github.com/jstephencorey/rpi-chicken-coop.git
 cd rpi-chicken-coop
 
 # Create virtual environment
-python3 -m venv venv
+python3 -m venv venv --system-site-packages
 source venv/bin/activate
 
 # Install Python dependencies from the requirements file

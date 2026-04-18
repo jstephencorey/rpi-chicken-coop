@@ -44,7 +44,7 @@ Flash to microSD and boot the Pi.
 sudo apt update && sudo apt upgrade -y
 
 # Install system dependencies
-sudo apt install -y python3-pip python3-venv ffmpeg v4l-utils git motion vim
+sudo apt install -y python3-pip python3-venv ffmpeg v4l-utils git motion vim python3-picamera2
 
 # verify has rpicam: this should return something.
 which rpicam-still
@@ -58,16 +58,18 @@ Edit `/boot/firmware/config.txt` with `sudo vim /boot/firmware/config.txt` (see 
 
 ``` bash
 # Get all of the code from github
+git clone https://github.com/jstephencorey/rpi-chicken-coop.git
+cd rpi-chicken-coop
 
 # Create virtual environment
 python3 -m venv venv
 source venv/bin/activate
 
-# Install Python dependencies
-pip install fastapi uvicorn[standard] picamera2 gpiozero
+# Install Python dependencies from the requirements file
+pip install -r requirements.txt
 
-# Test camera is working
-libcamera-hello --qt-preview
+# run it:
+uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
 ## Project Structure

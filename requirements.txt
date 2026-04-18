@@ -5,8 +5,7 @@ fastapi==0.135.3
 uvicorn[standard]==0.44.0
 
 # Raspberry Pi camera (install via apt when possible, but pip fallback)
-# Note: picamera2 is typically installed via: sudo apt install python3-picamera2
-# If you must use pip: picamera2==0.3.34
+picamera2==0.3.34
 
 # GPIO control for servo
 gpiozero==2.0.1

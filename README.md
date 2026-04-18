@@ -44,7 +44,7 @@ Flash to microSD and boot the Pi.
 sudo apt update && sudo apt upgrade -y
 
 # Install system dependencies
-sudo apt install -y python3-pip python3-venv ffmpeg v4l-utils git motion vim python3-picamera2
+sudo apt install -y python3-pip python3-venv ffmpeg v4l-utils git motion vim python3-picamera2 libcap-dev
 
 # verify has rpicam: this should return something.
 which rpicam-still
@@ -54,9 +54,11 @@ Edit `/boot/firmware/config.txt` with `sudo vim /boot/firmware/config.txt` (see 
     change `camera_auto_detect=1` to `camera_auto_detect=0`
     Locate the line [all] and add the following line below it:
         `dtoverlay=imx708` (you may need it to be different depending on what camera you have. Check out the arducam docs for more info)
-    reboot with `sudo reboot` (optional)
+    
+reboot with `sudo reboot` 
 
 ``` bash
+
 # Get all of the code from github
 git clone https://github.com/jstephencorey/rpi-chicken-coop.git
 cd rpi-chicken-coop
@@ -67,6 +69,8 @@ source venv/bin/activate
 
 # Install Python dependencies from the requirements file
 pip install -r requirements.txt
+
+# note that there were some slightly weird things that happened with PyCamera-2, so you may need to try reinstalling it a few times and reboot it
 
 # run it:
 uvicorn main:app --host 0.0.0.0 --port 8000

@@ -1,0 +1,76 @@
+# Remote Chicken Coop - Proof of Concept
+
+This repo is meant to be a repository of the code needed to use a Raspberry Pi board for running a chicken coop remotely.
+
+Currently this is a proof of concept, A simple FastAPI-based web interface for remote camera viewing and servo control on a Raspberry Pi Zero 2 W.
+
+## Hardware Requirements
+
+- Raspberry Pi Zero 2 W
+- Pi Camera Module (with Zero camera cable)
+- SG90 or similar hobby servo
+- Jumper wires
+
+## Wiring
+
+| Servo Wire             | Pi Zero 2 W Pin  |
+| ---------------------- | ---------------- |
+| Red (power)            | 5V (pin 2)       |
+| Brown/Black (ground)   | GND (pin 6)      |
+| Orange/Yellow (signal) | GPIO 17 (pin 11) |
+
+## Flash Raspberry Pi OS
+
+Download Raspberry Pi Imager
+Select Raspberry Pi OS Lite (64-bit).
+
+Configure advanced settings:
+    Enable SSH
+    Set username/password (most of this assumes a username of `piuser`)
+    Configure WiFi (SSID + password + country(?))
+    Set hostname (e.g., pi-cam)
+
+Flash to microSD and boot the Pi.
+
+## Raspberry Pi Setup Commands
+
+`ssh picoop-admin@pi-coop.local`
+(or use the Pi’s IP address)
+
+```bash
+# Update system (this may take a while)
+sudo apt update && sudo apt upgrade -y
+
+# Install system dependencies
+sudo apt install -y python3-pip python3-venv ffmpeg v4l-utils git motion vim
+
+# verify has rpicam: this should return something.
+which rpicam-still
+
+# Enable camera interface
+sudo raspi-config
+# Navigate to: Interface Options > Camera > Enable
+# Reboot when prompted
+
+OR:
+Edit `/boot/firmware/config.txt` with `sudo vim /boot/firmware/config.txt` (see here: https://docs.arducam.com/Raspberry-Pi-Camera/Native-camera/12MP-IMX708/)
+    change `camera_auto_detect=1` to `camera_auto_detect=0`
+    Locate the line [all] and add the following line below it:
+        `dtoverlay=imx708` (you may need it to be different depending on what camera you have. Check out the arducam docs for more info)
+    reboot with `sudo reboot` (optional)
+
+# Create project directory
+mkdir ~/chicken-coop && cd ~/chicken-coop
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install Python dependencies
+pip install fastapi uvicorn[standard] picamera2 gpiozero
+
+# Test camera is working
+libcamera-hello --qt-preview
+```
+
+## Project Structure

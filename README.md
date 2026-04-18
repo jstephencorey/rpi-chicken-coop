@@ -79,4 +79,88 @@ pip install -r requirements.txt
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-## Project Structure
+## Cloudflare Tunnel Setup
+
+### Step 1: Install cloudflared
+
+```bash
+# Download latest ARM build for Pi Zero 2 W
+cd ~
+wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm
+
+# Make executable and move to system path
+chmod +x cloudflared-linux-arm
+sudo mv cloudflared-linux-arm /usr/local/bin/cloudflared
+
+# Verify installation
+cloudflared version
+```
+
+### Step 2: Authenticate with Cloudflare
+
+```bash
+# This opens a browser link to authenticate
+cloudflared tunnel login
+
+## You'll see output like:
+# A browser window should have opened at the following URL:
+
+# https://dash.cloudflare.com/argotunnel?callback=https%3A%2F%2Flocalhost%3A...
+
+# If not, please visit the URL above in your browser.
+
+# 1. Copy that URL and open it on any device (phone, laptop, etc.)
+# 2. Select your Cloudflare domain or create a free one (e.g., `your-domain.workers.dev`)
+# 3. Authorize — this downloads a certificate to your Pi at `~/.cloudflared/cert.pem`
+```
+
+### Step 3: Create a Permanent Tunnel
+
+```bash
+# Create the tunnel (name it whatever you want)
+cloudflared tunnel create rpi-chicken-coop
+
+# Output shows your tunnel ID, save this:
+# Tunnel credentials written to /home/pi/.cloudflared/<UUID>.json
+# Your tunnel ID is: <UUID>
+```
+
+### Step 4: Configure the Tunnel
+Create a config file:
+
+```bash
+vim ~/.cloudflared/config.yml
+```
+Add this content (replace <YOUR_TUNNEL_ID> with the ID from step 3):
+
+``` yaml
+yaml
+tunnel: <YOUR_TUNNEL_ID>
+credentials-file: /home/picoop-admin/.cloudflared/<YOUR_TUNNEL_ID>.json
+
+ingress:
+  - hostname: coop.your-domain.workers.dev
+    service: http://localhost:8000
+  - service: http_status:404
+```
+### Step 5: Route DNS to Your Tunnel
+
+``` bash
+# Create a DNS record pointing to your tunnel
+# Replace with your actual domain and tunnel ID
+cloudflared tunnel route dns rpi-chicken-coop coop.your-domain.workers.dev
+```
+
+### Step 6: Test the Tunnel
+```bash
+# Start the tunnel manually to verify
+cloudflared tunnel run rpi-chicken-coop
+```
+You should see:
+
+```bash
+2024-XX-XXTXX:XX:XXZ INF Connection registered       connIndex=0 ...
+```
+Now visit https://coop.your-domain.workers.dev — it should show your chicken coop interface!
+
+Stop the test with Ctrl+C.

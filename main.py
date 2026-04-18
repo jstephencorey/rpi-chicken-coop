@@ -80,9 +80,9 @@ async def root():
         </div>
         
         <div class="controls">
-            <button onclick="moveServo(-90)">⬅️ Left</button>
+            <button onclick="moveServo(90)">⬅️ Left</button>
             <button onclick="moveServo(0)">⏹️ Center</button>
-            <button onclick="moveServo(90)">➡️ Right</button>
+            <button onclick="moveServo(-90)">➡️ Right</button>
         </div>
         
         <div class="status" id="status">Servo position: center</div>

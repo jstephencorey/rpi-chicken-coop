@@ -44,7 +44,10 @@ Flash to microSD and boot the Pi.
 sudo apt update && sudo apt upgrade -y
 
 # Install system dependencies (also may take a while)
-sudo apt install -y python3-pip python3-venv ffmpeg v4l-utils git motion vim python3-picamera2 libcap-dev pigpio
+sudo apt install -y python3-pip python3-venv ffmpeg v4l-utils git motion vim python3-picamera2 libcap-dev
+
+# install pigpio by building it from the source (also will take a few minutes)
+sudo ./install_pigpio.sh
 
 # verify has rpicam: this should return something.
 which rpicam-still

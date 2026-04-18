@@ -14,8 +14,8 @@ class ServoController:
             gpio_pin,
             min_angle=min_angle,
             max_angle=max_angle,
-            min_pulse_width=0.005,
-            max_pulse_width=0.025
+            min_pulse_width=0.0005,
+            max_pulse_width=0.0025
         )
         
         self.current_angle = 0

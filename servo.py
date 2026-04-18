@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 
 class ServoController:
-    def __init__(self, gpio_pin=17, min_angle=-90, max_angle=90):
+    def __init__(self, gpio_pin=18, min_angle=-90, max_angle=90):
         self.min_angle = min_angle
         self.max_angle = max_angle
         

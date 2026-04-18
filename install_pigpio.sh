@@ -11,12 +11,23 @@ cd pigpio-79
 make
 sudo make install
 
-# Update library cache and systemd
+# Create the pigpiod service file
+sudo tee /etc/systemd/system/pigpiod.service << 'EOF'
+[Unit]
+Description=Pi GPIO daemon
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/local/bin/pigpiod
+ExecStop=/bin/kill -TERM $MAINPID
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Reload systemd and start the service
 sudo ldconfig
 sudo systemctl daemon-reload
-
-# Enable and start the pigpiod service
 sudo systemctl enable --now pigpiod
-
-sudo systemctl enable pigpiod
-sudo systemctl start pigpiod
